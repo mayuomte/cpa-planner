@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
     <nav class="app-nav">
         <div class="nav-links">
@@ -47,12 +45,12 @@
 
         <section id="import-view" style="display: none;">
             <div class="panel">
-                <h3>Cloud Management</h3>
-                <p>Data is automatically synced to Firebase.</p>
+                <h3>Bulk Task Import</h3>
+                <p>Upload a CSV with: <i>task_name, category, due_date (YYMMDD)</i></p>
+                <input type="file" id="csv-file-input" accept=".csv" onchange="importCSV(event)" style="margin: 20px 0;">
                 <hr style="margin: 30px 0; border: 0; border-top: 1px dashed #ccc;">
-                <h3 style="color: #F44336;">Nuclear Option</h3>
-                <button class="btn-danger" onclick="fullReset()" style="width: 100%; margin-top: 15px;">WIPE CLOUD
-                    DATA</button>
+                <h3 style="color: #F44336;">Cloud Management</h3>
+                <button class="btn-danger" onclick="fullReset()" style="width: 100%; margin-top: 15px;">WIPE CLOUD DATA</button>
             </div>
         </section>
 
@@ -90,5 +88,4 @@
     </script>
     <script src="script.js"></script>
 </body>
-
 </html>
