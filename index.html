@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CPA Master Study Planner</title>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
+
     <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="shortcut icon" href="favicon.ico" />
+    
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    
     <link rel="manifest" href="site.webmanifest" />
     <meta name="apple-mobile-web-app-title" content="CPA Planner" />
 </head>
@@ -18,7 +22,6 @@
     <nav class="app-nav">
         <div class="nav-links">
             <button class="nav-btn active" id="tab-tasks" onclick="showTab('tasks')">Tasks</button>
-            <button class="nav-btn" id="tab-calendar" onclick="showTab('calendar')">Calendar</button>
             <button class="nav-btn" id="tab-summary" onclick="showTab('summary')">Summary</button>
             <button class="nav-btn" id="tab-import" onclick="showTab('import')">Import</button>
             <button class="nav-btn" id="tab-deleted" onclick="showTab('deleted')">Trash</button>
@@ -43,18 +46,6 @@
             <ul id="task-list"></ul>
         </section>
 
-        <section id="calendar-view" style="display: none;">
-            <div class="calendar-controls">
-                <button class="btn-icon" onclick="changeMonth(-1)">◀</button>
-                <h3 id="calendar-month-year"></h3>
-                <button class="btn-icon" onclick="changeMonth(1)">▶</button>
-            </div>
-            <div class="calendar-grid-header">
-                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-            </div>
-            <div id="calendar-grid" class="calendar-grid"></div>
-        </section>
-
         <section id="summary-view" style="display: none;">
             <div class="panel">
                 <h3>Study Analytics</h3>
@@ -68,6 +59,7 @@
                 <h3>Bulk Task Import</h3>
                 <p>Upload a CSV with: <i>task_name, category, due_date (YYMMDD)</i></p>
                 <input type="file" id="csv-file-input" accept=".csv" onchange="importCSV(event)" style="margin: 20px 0;">
+
                 <hr style="margin: 30px 0; border: 0; border-top: 1px dashed #ccc;">
                 <h3 style="color: #F44336;">Cloud Management</h3>
                 <p style="font-size: 12px; color: #666;">Data is automatically synced to Firebase.</p>
@@ -91,6 +83,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
+        // Your specific Singapore-based Firebase setup
         const firebaseConfig = {
             apiKey: "AIzaSyDfoJc_bKzWTJjvS3OYj2CcCu7xPmR9gqs",
             authDomain: "cpa-study-ad5b8.firebaseapp.com",
@@ -102,12 +95,14 @@
             measurementId: "G-13J66SEEKR"
         };
 
+        // Initialize Firebase and expose to window for script.js
         const app = initializeApp(firebaseConfig);
         window.db = getDatabase(app);
         window.dbRef = ref;
         window.dbSet = set;
         window.dbOnValue = onValue;
     </script>
+
     <script src="script.js"></script>
 </body>
 </html>
