@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CPA Master Study Planner</title>
     
+    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="CPA Planner">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
-
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="CPA Planner" /> <link rel="manifest" href="/site.webmanifest" />
 </head>
-
 <body>
 
     <nav class="app-nav">
@@ -57,8 +57,7 @@
             <div class="panel">
                 <h3>Bulk Task Import</h3>
                 <p>Upload a CSV with: <i>task_name, category, due_date (YYMMDD)</i></p>
-                <input type="file" id="csv-file-input" accept=".csv" onchange="importCSV(event)"
-                    style="margin: 20px 0;">
+                <input type="file" id="csv-file-input" accept=".csv" onchange="importCSV(event)" style="margin: 20px 0;">
 
                 <hr style="margin: 30px 0; border: 0; border-top: 1px dashed #ccc;">
                 <h3 style="color: #F44336;">Cloud Management</h3>
@@ -74,7 +73,7 @@
 
     <footer class="smart-input-bar">
         <div class="input-wrapper">
-            <input type="text" id="task-input" placeholder="Task name + YYMMDD shorthand (e.g. 連結会計 260315)">
+            <input type="text" id="task-input" placeholder="Task name + YYMMDD (e.g. 連結会計 260315)">
             <button id="add-task-btn" onclick="addTask()">Add</button>
         </div>
     </footer>
@@ -83,7 +82,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
-        // Your specific Firebase configuration
+        // Your specific Singapore-based Firebase setup
         const firebaseConfig = {
             apiKey: "AIzaSyDfoJc_bKzWTJjvS3OYj2CcCu7xPmR9gqs",
             authDomain: "cpa-study-ad5b8.firebaseapp.com",
@@ -95,17 +94,14 @@
             measurementId: "G-13J66SEEKR"
         };
 
-        // Initialize Firebase
+        // Initialize Firebase and expose to window for script.js
         const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // Expose Firebase functions globally for script.js
-        window.db = db;
+        window.db = getDatabase(app);
         window.dbRef = ref;
         window.dbSet = set;
         window.dbOnValue = onValue;
     </script>
+
     <script src="script.js"></script>
 </body>
-
 </html>
