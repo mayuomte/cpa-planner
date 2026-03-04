@@ -1,44 +1,58 @@
+// --- Initial State & Global Access ---
 let tasks = [];
 let myChart = null;
 let activeTimer = null;
 let uiInterval = null;
+let isDataLoaded = false; // Safety flag to prevent overwriting cloud with empty data
 
 const catColors = {
     'TODAY': '#F44336', '簿記': '#EC407A', '財務': '#AB47BC',
     '管理': '#7E57C2', '監査': '#5C6BC0', '企業': '#42A5F5'
 };
 
-// --- Firebase Sync ---
+// --- Utilities ---
+function formatTime(totalMinutes) {
+    const totalSeconds = Math.floor(totalMinutes * 60);
+    const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+    const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+    const s = (totalSeconds % 60).toString().padStart(2, '0');
+    return `${h}:${m}:${s}`;
+}
+
+// --- Firebase Sync Logic ---
 function initSync() {
-    // 1. Check if Firebase is actually loaded
     if (!window.db) {
-        console.log("Waiting for Firebase...");
-        setTimeout(initSync, 500); // Try again in 0.5 seconds
+        setTimeout(initSync, 100);
         return;
     }
 
     const tasksRef = window.dbRef(window.db, 'tasks');
     
-    // 2. This listener stays active and pulls data whenever it changes
+    // Listens for data. Triggers once on load, then every time cloud data changes.
     window.dbOnValue(tasksRef, (snapshot) => {
         const data = snapshot.val();
-        // Firebase returns an object or null; we convert it back to an array for our app
-        tasks = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
-        console.log("Data synced from Cloud:", tasks.length, "tasks found.");
+        
+        // Convert Firebase object/null to Array
+        if (data) {
+            tasks = Array.isArray(data) ? data : Object.values(data);
+        } else {
+            tasks = [];
+        }
+        
+        isDataLoaded = true; // Data has arrived, it's now safe to save
         renderTasks();
         
         if (document.getElementById('summary-view').style.display === 'block') renderChart();
-    }, (error) => {
-        console.error("Firebase sync error:", error);
-        alert("Sync Error: Check your Firebase Database Rules!");
     });
 }
 
 function saveToCloud() {
-    if (!window.db) return;
-    // Clean up empty data
-    tasks = tasks.filter(t => t.id && t.name && t.name.trim() !== "");
-    window.dbSet(window.dbRef(window.db, 'tasks'), tasks);
+    // CRITICAL: Never save if the initial data fetch hasn't finished.
+    // This prevents a blank page from "saving" an empty list over your real data.
+    if (!window.db || !isDataLoaded) return;
+
+    const sanitizedTasks = tasks.filter(t => t.id && t.name && t.name.trim() !== "");
+    window.dbSet(window.dbRef(window.db, 'tasks'), sanitizedTasks);
 }
 
 // --- CSV Import ---
@@ -126,13 +140,14 @@ window.softDelete = function (id) {
     saveToCloud();
 };
 
-// --- View Logic ---
+// --- View Rendering ---
 window.renderTasks = function () {
     const filter = document.getElementById('category-dropdown').value;
     const today = new Date().toISOString().split('T')[0];
     const list = document.getElementById('task-list');
     const dList = document.getElementById('deleted-list');
     if (!list || !dList) return;
+    
     list.innerHTML = ''; dList.innerHTML = '';
 
     tasks.forEach(t => {
@@ -162,14 +177,6 @@ window.renderTasks = function () {
         }
     });
 };
-
-function formatTime(totalMinutes) {
-    const totalSeconds = Math.floor(totalMinutes * 60);
-    const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
-    const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
-    const s = (totalSeconds % 60).toString().padStart(2, '0');
-    return `${h}:${m}:${s}`;
-}
 
 function startLiveUI() {
     clearInterval(uiInterval);
@@ -217,5 +224,5 @@ function renderChart() {
 
 document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && document.activeElement.id === 'task-input') window.addTask(); });
 
-// Start the sync process immediately
+// Start the real-time sync
 initSync();
