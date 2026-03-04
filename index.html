@@ -10,7 +10,6 @@
 </head>
 
 <body>
-
     <nav class="app-nav">
         <div class="nav-links">
             <button class="nav-btn active" id="tab-tasks" onclick="showTab('tasks')">Tasks</button>
@@ -31,10 +30,6 @@
                 <option value="企業">企業</option>
             </select>
         </div>
-        <div id="bulk-action-bar" style="display: none; margin-top: 15px;">
-            <button class="btn-secondary" onclick="selectAllTasks()">Select All</button>
-            <button class="btn-danger" onclick="bulkDelete()">Delete Selected</button>
-        </div>
     </header>
 
     <main class="content-area">
@@ -52,15 +47,11 @@
 
         <section id="import-view" style="display: none;">
             <div class="panel">
-                <h3>Bulk Task Import</h3>
-                <p>Upload a CSV with: <i>task_name, category, due_date (YYMMDD)</i></p>
-                <input type="file" id="csv-file-input" accept=".csv" onchange="importCSV(event)"
-                    style="margin: 20px 0;">
-
+                <h3>Cloud Management</h3>
+                <p>Data is automatically synced to Firebase.</p>
                 <hr style="margin: 30px 0; border: 0; border-top: 1px dashed #ccc;">
                 <h3 style="color: #F44336;">Nuclear Option</h3>
-                <p style="font-size: 12px; color: #666;">Delete all data and start completely fresh.</p>
-                <button class="btn-danger" onclick="fullReset()" style="width: 100%; margin-top: 15px;">WIPE ALL
+                <button class="btn-danger" onclick="fullReset()" style="width: 100%; margin-top: 15px;">WIPE CLOUD
                     DATA</button>
             </div>
         </section>
@@ -72,11 +63,31 @@
 
     <footer class="smart-input-bar">
         <div class="input-wrapper">
-            <input type="text" id="task-input" placeholder="Task name + YYMMDD shorthand (e.g. 連結会計 260315)">
+            <input type="text" id="task-input" placeholder="連結会計 260315">
             <button id="add-task-btn" onclick="addTask()">Add</button>
         </div>
     </footer>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDfoJc_bKzWTJjvS3OYj2CcCu7xPmR9gqs",
+            authDomain: "cpa-study-ad5b8.firebaseapp.com",
+            projectId: "cpa-study-ad5b8",
+            storageBucket: "cpa-study-ad5b8.firebasestorage.app",
+            messagingSenderId: "444629295497",
+            appId: "1:444629295497:web:5f382e497a3d2278f8c158",
+            measurementId: "G-13J66SEEKR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        window.db = getDatabase(app);
+        window.dbRef = ref;
+        window.dbSet = set;
+        window.dbOnValue = onValue;
+    </script>
     <script src="script.js"></script>
 </body>
 
