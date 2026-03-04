@@ -10,17 +10,33 @@ const catColors = {
 
 // --- Firebase Sync ---
 function initSync() {
+    // 1. Check if Firebase is actually loaded
+    if (!window.db) {
+        console.log("Waiting for Firebase...");
+        setTimeout(initSync, 500); // Try again in 0.5 seconds
+        return;
+    }
+
     const tasksRef = window.dbRef(window.db, 'tasks');
+    
+    // 2. This listener stays active and pulls data whenever it changes
     window.dbOnValue(tasksRef, (snapshot) => {
         const data = snapshot.val();
-        tasks = data ? Object.values(data) : [];
+        // Firebase returns an object or null; we convert it back to an array for our app
+        tasks = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
+        console.log("Data synced from Cloud:", tasks.length, "tasks found.");
         renderTasks();
+        
         if (document.getElementById('summary-view').style.display === 'block') renderChart();
+    }, (error) => {
+        console.error("Firebase sync error:", error);
+        alert("Sync Error: Check your Firebase Database Rules!");
     });
 }
 
 function saveToCloud() {
-    // Sanitize: ensure valid entries before pushing to Firebase
+    if (!window.db) return;
+    // Clean up empty data
     tasks = tasks.filter(t => t.id && t.name && t.name.trim() !== "");
     window.dbSet(window.dbRef(window.db, 'tasks'), tasks);
 }
@@ -32,12 +48,11 @@ window.importCSV = function (event) {
 
     const reader = new FileReader();
     reader.onload = function (e) {
-        const rows = e.target.result.split(/\r?\n/).slice(1); // Skip header row
+        const rows = e.target.result.split(/\r?\n/).slice(1);
         rows.forEach(r => {
             const [n, c, d] = r.split(',').map(x => x?.trim());
             if (n) {
                 let date = d;
-                // Parse shorthand YYMMDD to YYYY-MM-DD
                 if (d && d.length === 6 && !d.includes('-')) {
                     date = `20${d.slice(0, 2)}-${d.slice(2, 4)}-${d.slice(4, 6)}`;
                 }
@@ -51,13 +66,13 @@ window.importCSV = function (event) {
             }
         });
         saveToCloud();
-        alert("Imported! Syllabus is now in the cloud.");
+        alert("Imported to Cloud!");
         window.showTab('tasks');
     };
     reader.readAsText(file);
 };
 
-// --- Main Actions ---
+// --- Task Actions ---
 window.addTask = function () {
     const input = document.getElementById('task-input');
     const val = input.value.trim();
@@ -111,7 +126,7 @@ window.softDelete = function (id) {
     saveToCloud();
 };
 
-// --- View Rendering ---
+// --- View Logic ---
 window.renderTasks = function () {
     const filter = document.getElementById('category-dropdown').value;
     const today = new Date().toISOString().split('T')[0];
@@ -202,5 +217,5 @@ function renderChart() {
 
 document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && document.activeElement.id === 'task-input') window.addTask(); });
 
-// Wait for Firebase to load before syncing
-setTimeout(initSync, 1000);
+// Start the sync process immediately
+initSync();
