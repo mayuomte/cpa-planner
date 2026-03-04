@@ -1,24 +1,18 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CPA Master Study Planner</title>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
-
     <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="shortcut icon" href="favicon.ico" />
-
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
-
     <link rel="manifest" href="site.webmanifest" />
     <meta name="apple-mobile-web-app-title" content="CPA Planner" />
 </head>
-
 <body>
 
     <nav class="app-nav">
@@ -52,17 +46,11 @@
         <section id="calendar-view" style="display: none;">
             <div class="calendar-controls">
                 <button class="btn-icon" onclick="changeMonth(-1)">◀</button>
-                <h3 id="calendar-month-year">Month Year</h3>
+                <h3 id="calendar-month-year"></h3>
                 <button class="btn-icon" onclick="changeMonth(1)">▶</button>
             </div>
             <div class="calendar-grid-header">
-                <div>Sun</div>
-                <div>Mon</div>
-                <div>Tue</div>
-                <div>Wed</div>
-                <div>Thu</div>
-                <div>Fri</div>
-                <div>Sat</div>
+                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
             </div>
             <div id="calendar-grid" class="calendar-grid"></div>
         </section>
@@ -79,13 +67,11 @@
             <div class="panel">
                 <h3>Bulk Task Import</h3>
                 <p>Upload a CSV with: <i>task_name, category, due_date (YYMMDD)</i></p>
-                <input type="file" id="csv-file-input" accept=".csv" onchange="importCSV(event)"
-                    style="margin: 20px 0;">
-
+                <input type="file" id="csv-file-input" accept=".csv" onchange="importCSV(event)" style="margin: 20px 0;">
                 <hr style="margin: 30px 0; border: 0; border-top: 1px dashed #ccc;">
                 <h3 style="color: #F44336;">Cloud Management</h3>
-                <button class="btn-danger" onclick="fullReset()" style="width: 100%; margin-top: 15px;">WIPE ALL CLOUD
-                    DATA</button>
+                <p style="font-size: 12px; color: #666;">Data is automatically synced to Firebase.</p>
+                <button class="btn-danger" onclick="fullReset()" style="width: 100%; margin-top: 15px;">WIPE ALL CLOUD DATA</button>
             </div>
         </section>
 
@@ -122,8 +108,6 @@
         window.dbSet = set;
         window.dbOnValue = onValue;
     </script>
-
     <script src="script.js"></script>
 </body>
-
 </html>
